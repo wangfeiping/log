@@ -5,7 +5,17 @@ import (
 )
 
 var defaultConfig = `
-<seelog>
+<seelog minlevel="trace">
+	<outputs formatid="fmt">
+	    <console />
+	</outputs>
+	<formats>
+		<format id="fmt" format="%L [%Date(2006-01-02 15:04:05.000000000)] %Msg%n"/>
+	</formats>
+</seelog>`
+
+var defaultRollingFileConfig = `
+<seelog minlevel="debug">
 	<outputs>
 	<rollingfile formatid="fmt" type="date"
 	 filename="./logger.log"
@@ -25,10 +35,29 @@ func init() {
 	replace(logger)
 }
 
-// ReConfig replace logger from new config string
-func ReConfig(config string) {
-	logger, _ := seelog.LoggerFromConfigAsBytes([]byte(config))
+// Config replace logger from config string
+func Config(config string) {
+	logger, err := seelog.LoggerFromConfigAsBytes([]byte(config))
+	if err != nil {
+		Errorf("log config error: ", err)
+		return
+	}
 	replace(logger)
+}
+
+// Load replace logger from config file
+func Load(conf string) {
+	logger, err := seelog.LoggerFromConfigAsFile(conf)
+	if err != nil {
+		Errorf("log config load error: ", err)
+		return
+	}
+	replace(logger)
+}
+
+// DefaultRollingFileConfig returns config for rolling file
+func DefaultRollingFileConfig() string {
+	return defaultRollingFileConfig
 }
 
 // replace logger
