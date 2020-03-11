@@ -5,15 +5,22 @@ import (
 )
 
 var defaultConfig = `
-<seelog minlevel="trace">
-	<outputs formatid="formater"><console />
+<seelog>
+	<outputs>
+	<rollingfile formatid="fmt" type="date"
+	 filename="./logger.log"
+	 fullname="false" datepattern="20060102" maxrolls="7" />
 	</outputs>
 	<formats>
-		<format id="formater" format="[%Date(2006-01-02 15:04:05.000000000)][%LEV] %Msg%n"/>
+		<format id="fmt" format="%L [%Date(2006-01-02 15:04:05.000000000)] %Msg%n"/>
 	</formats>
 </seelog>`
 
 func init() {
+	err := log.RegisterCustomFormatter("L", logLevelFormatter)
+	if err != nil {
+		ErrorD("log init failed: ", err)
+	}
 	logger, _ := seelog.LoggerFromConfigAsBytes([]byte(defaultConfig))
 	Replace(logger)
 }
@@ -91,4 +98,25 @@ func Errorf(format string, params ...interface{}) {
 	// seelog.Error(fmt.Sprintf(format, params...), "\nStack:\n", string(debug.Stack()))
 	//params = append(params, string(debug.Stack()))
 	//seelog.Errorf(format+"\nError stack:\n%s", params...)
+}
+
+var logLevelToString = map[log.LogLevel]string{
+	log.TraceLvl:    "T",
+	log.DebugLvl:    "D",
+	log.InfoLvl:     "I",
+	log.WarnLvl:     "W",
+	log.ErrorLvl:    "E",
+	log.CriticalLvl: "C",
+	log.Off:         "_",
+}
+
+func logLevelFormatter(params string) log.FormatterFunc {
+	return func(message string, level log.LogLevel,
+		context log.LogContextInterface) interface{} {
+		levelStr, ok := logLevelToString[level]
+		if !ok {
+			return "!"
+		}
+		return levelStr
+	}
 }

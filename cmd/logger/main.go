@@ -17,4 +17,6 @@ func main() {
 	log.Warn("warn...")
 	log.Error("error...")
 	log.Info("ok, done.")
+
+	keepRunning(nil)
 }
