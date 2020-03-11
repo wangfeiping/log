@@ -22,22 +22,17 @@ func init() {
 		Errorf("log init failed: %v", err)
 	}
 	logger, _ := seelog.LoggerFromConfigAsBytes([]byte(defaultConfig))
-	Replace(logger)
+	replace(logger)
 }
 
-// ReplaceConfig replace logger from new config string
-func ReplaceConfig(config string) {
+// ReConfig replace logger from new config string
+func ReConfig(config string) {
 	logger, _ := seelog.LoggerFromConfigAsBytes([]byte(config))
-	Replace(logger)
+	replace(logger)
 }
 
-// LoadLogger 通过配置文件初始化日志模块
-func LoadLogger(conf string) (seelog.LoggerInterface, error) {
-	return seelog.LoggerFromConfigAsFile(conf)
-}
-
-// Replace logger
-func Replace(logger seelog.LoggerInterface) {
+// replace logger
+func replace(logger seelog.LoggerInterface) {
 	seelog.ReplaceLogger(logger)
 }
 
@@ -46,7 +41,7 @@ func Flush() {
 	seelog.Flush()
 }
 
-// Trace logs 详细运行跟踪日志，可能影响程序性能，所以生产环境不配置输出，仅在开发测试环境使用
+// Trace logs
 func Trace(v ...interface{}) {
 	seelog.Trace(v...)
 }
@@ -72,7 +67,7 @@ func Error(v ...interface{}) {
 	//seelog.Error(fmt.Sprint(v...), "\nError stack:\n", string(debug.Stack()))
 }
 
-// Tracef logs 详细运行跟踪日志，可能影响程序性能，所以生产环境不配置输出，仅在开发测试环境使用
+// Tracef logs
 func Tracef(format string, params ...interface{}) {
 	seelog.Tracef(format, params...)
 }
