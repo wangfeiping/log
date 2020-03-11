@@ -17,9 +17,9 @@ var defaultConfig = `
 </seelog>`
 
 func init() {
-	err := log.RegisterCustomFormatter("L", logLevelFormatter)
+	err := seelog.RegisterCustomFormatter("L", logLevelFormatter)
 	if err != nil {
-		ErrorD("log init failed: ", err)
+		Errorf("log init failed: %v", err)
 	}
 	logger, _ := seelog.LoggerFromConfigAsBytes([]byte(defaultConfig))
 	Replace(logger)
@@ -100,19 +100,19 @@ func Errorf(format string, params ...interface{}) {
 	//seelog.Errorf(format+"\nError stack:\n%s", params...)
 }
 
-var logLevelToString = map[log.LogLevel]string{
-	log.TraceLvl:    "T",
-	log.DebugLvl:    "D",
-	log.InfoLvl:     "I",
-	log.WarnLvl:     "W",
-	log.ErrorLvl:    "E",
-	log.CriticalLvl: "C",
-	log.Off:         "_",
+var logLevelToString = map[seelog.LogLevel]string{
+	seelog.TraceLvl:    "T",
+	seelog.DebugLvl:    "D",
+	seelog.InfoLvl:     "I",
+	seelog.WarnLvl:     "W",
+	seelog.ErrorLvl:    "E",
+	seelog.CriticalLvl: "C",
+	seelog.Off:         "_",
 }
 
-func logLevelFormatter(params string) log.FormatterFunc {
-	return func(message string, level log.LogLevel,
-		context log.LogContextInterface) interface{} {
+func logLevelFormatter(params string) seelog.FormatterFunc {
+	return func(message string, level seelog.LogLevel,
+		context seelog.LogContextInterface) interface{} {
 		levelStr, ok := logLevelToString[level]
 		if !ok {
 			return "!"
