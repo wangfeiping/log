@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,12 +15,12 @@ func keepRunning(cancel context.CancelFunc) {
 
 	select {
 	case s, ok := <-signals:
-		log.Debugf("system signal [%v] %t, trying to run callback...", s, ok)
+		log.Debugf("system signal [%v] %t, trying to run cancel...", s, ok)
 		if !ok {
 			break
 		}
-		if callback != nil {
-			callback(s)
+		if cancel != nil {
+			cancel()
 		}
 		log.Flush()
 		os.Exit(1)

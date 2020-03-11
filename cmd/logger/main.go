@@ -13,9 +13,7 @@ func main() {
 	defer log.Flush()
 
 	log.Trace("init...")
-
 	cancel := doLog()
-
 	log.Info("ok, done.")
 
 	keepRunning(cancel)
