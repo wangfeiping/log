@@ -5,6 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/wangfeiping/log"
 )
 
@@ -23,7 +25,12 @@ func main() {
 func output() {
 	t := time.Now().Format(time.RFC3339Nano)
 	log.Debugf("debug: %s", t)
+	log.DebugZ("debug message",
+		zap.Int64("timestamp", time.Now().UnixNano()),
+		zap.String("for", "test"))
+	log.Debug("debug: ", "name", "time", time.Now().UnixNano())
 	log.Warn("warn...")
+	log.Warn("warn: ", "name", "test", "time", time.Now().UnixNano())
 	log.Error("error...")
 }
 

@@ -1,6 +1,7 @@
 package log
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 
@@ -29,7 +30,7 @@ func init() {
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
-	// 设置日志级别
+	// log level
 	level := zap.NewAtomicLevelAt(zap.DebugLevel)
 
 	config := zap.Config{
@@ -77,26 +78,17 @@ func Trace(v ...interface{}) {
 func Debug(v ...interface{}) {
 	msg, fields, err := parse(v...)
 	if err != nil {
-		fmt.Printf("log parse error: %v\n", err)
+		fmt.Printf("log error(debug): %v\n", err)
 		return
 	}
 	logger.Debug(msg, fields...)
-}
-
-func parse(v ...interface{}) (string, []zap.Field, error) {
-	if msg, ok := v[0].(string); ok {
-		var fields []zap.Field
-		return msg, fields, nil
-	}
-	return "", nil, errors.New("unable to build log: " + fmt.Sprint(v[1:]))
-
 }
 
 // Info logs
 func Info(v ...interface{}) {
 	msg, fields, err := parse(v...)
 	if err != nil {
-		fmt.Printf("log parse error: %v\n", err)
+		fmt.Printf("log error(info): %v\n", err)
 		return
 	}
 	logger.Info(msg, fields...)
@@ -106,7 +98,7 @@ func Info(v ...interface{}) {
 func Warn(v ...interface{}) {
 	msg, fields, err := parse(v...)
 	if err != nil {
-		fmt.Printf("log parse error: %v\n", err)
+		fmt.Printf("log error(warn): %v\n", err)
 		return
 	}
 	logger.Warn(msg, fields...)
@@ -116,7 +108,7 @@ func Warn(v ...interface{}) {
 func Error(v ...interface{}) {
 	msg, fields, err := parse(v...)
 	if err != nil {
-		fmt.Printf("log parse error: %v\n", err)
+		fmt.Printf("log error(error): %v\n", err)
 		return
 	}
 	logger.Error(msg, fields...)
@@ -144,4 +136,44 @@ func Warnf(format string, params ...interface{}) {
 // Errorf formats logs
 func Errorf(format string, params ...interface{}) {
 	logger.Error(fmt.Sprintf(format, params...))
+}
+
+// DebugZ formats logs
+func DebugZ(msg string, fields ...zap.Field) {
+	logger.Debug(msg, fields...)
+}
+
+// InfoZ formats logs
+func InfoZ(msg string, fields ...zap.Field) {
+	logger.Info(msg, fields...)
+}
+
+// WarnZ formats logs
+func WarnZ(msg string, fields ...zap.Field) {
+	logger.Warn(msg, fields...)
+}
+
+// ErrorZ formats logs
+func ErrorZ(msg string, fields ...zap.Field) {
+	logger.Error(msg, fields...)
+}
+
+func parse(v ...interface{}) (string, []zap.Field, error) {
+	if msg, ok := v[0].(string); ok {
+		var fields []zap.Field
+		if len(v)%2 == 1 {
+			return msg, fields, nil
+		}
+	}
+	return "", nil, errors.New(join("unable to build log:", v[1:]...))
+}
+
+func join(msg string, v ...interface{}) string {
+	var buf bytes.Buffer
+	buf.WriteString(msg)
+	for _, s := range v {
+		buf.WriteString(" ")
+		buf.WriteString(fmt.Sprint(s))
+	}
+	return buf.String()
 }
