@@ -11,7 +11,7 @@ import (
 func main() {
 
 	defer log.Flush()
-	log.Config(log.DefaultRollingFileConfig())
+	log.Config(log.RollingFileConfig())
 
 	log.Trace("init...")
 	cancel := doLog()
