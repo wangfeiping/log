@@ -16,6 +16,22 @@ var rollingFileConfig = ``
 var logger *zap.Logger
 
 func init() {
+	// config := zap.NewProductionConfig()
+	config := newConfig()
+
+	var err error
+	logger, err = config.Build()
+	if err != nil {
+		panic(fmt.Sprintf("log init failed: %v", err))
+	}
+}
+
+// Config replace logger from config string
+func Config(config string) {
+
+}
+
+func newConfig() zap.Config {
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:    "time",
 		LevelKey:   "level",
@@ -34,25 +50,16 @@ func init() {
 	level := zap.NewAtomicLevelAt(zap.DebugLevel)
 
 	config := zap.Config{
-		Level:            level,
-		Development:      true,
-		Encoding:         "console", // "console/json",
-		EncoderConfig:    encoderConfig,
-		InitialFields:    map[string]interface{}{"service": "logger"},
-		OutputPaths:      []string{"stdout", "./logger.log"},
+		Level:         level,
+		Development:   true,
+		Encoding:      "console", // "console/json",
+		EncoderConfig: encoderConfig,
+		InitialFields: map[string]interface{}{"service": "logger"},
+		// OutputPaths:      []string{"stdout", "./logger.log"},
+		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
 	}
-
-	var err error
-	logger, err = config.Build()
-	if err != nil {
-		panic(fmt.Sprintf("log init failed: %v", err))
-	}
-}
-
-// Config replace logger from config string
-func Config(config string) {
-
+	return config
 }
 
 // Load replace logger from config file
