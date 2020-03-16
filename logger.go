@@ -7,11 +7,12 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 )
 
 var defaultConfig = ``
 
-var rollingFileConfig = ``
+var rollingFileConfig = `zap:defaultRollingFile`
 
 var logger *zap.Logger
 
@@ -28,7 +29,45 @@ func init() {
 
 // Config replace logger from config string
 func Config(config string) {
+	if config == rollingFileConfig {
+		rolling := lumberjack.Logger{
+			Filename:   "./logger.log",
+			MaxSize:    512,
+			MaxBackups: 10,
+			MaxAge:     7,
+			Compress:   true,
+		}
 
+		encoderConfig := zapcore.EncoderConfig{
+			TimeKey:    "time",
+			LevelKey:   "level",
+			NameKey:    "logger",
+			CallerKey:  "caller",
+			MessageKey: "msg",
+			// StacktraceKey:  "stacktrace",
+			LineEnding:     zapcore.DefaultLineEnding,
+			EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+			EncodeTime:     zapcore.ISO8601TimeEncoder,
+			EncodeDuration: zapcore.SecondsDurationEncoder,
+			EncodeCaller:   zapcore.ShortCallerEncoder,
+			EncodeName:     zapcore.FullNameEncoder,
+		}
+
+		level := zap.NewAtomicLevelAt(zap.DebugLevel)
+
+		core := zapcore.NewCore(
+			zapcore.NewJSONEncoder(encoderConfig),
+			zapcore.NewMultiWriteSyncer(
+				// zapcore.AddSync(os.Stdout),
+				zapcore.AddSync(&rolling)),
+			level,
+		)
+
+		caller := zap.AddCaller()
+		development := zap.Development()
+		filed := zap.Fields(zap.String("service", "logger"))
+		logger = zap.New(core, caller, development, filed)
+	}
 }
 
 func newConfig() zap.Config {
