@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/wangfeiping/log/encoder"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
@@ -83,7 +84,7 @@ func newConfig() zap.Config {
 		EncodeLevel:    zapcore.LowercaseLevelEncoder,
 		EncodeTime:     zapcore.ISO8601TimeEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
-		EncodeCaller:   zapcore.ShortCallerEncoder,
+		EncodeCaller:   encoder.ProxyCallerEncoder,
 	}
 
 	// log level

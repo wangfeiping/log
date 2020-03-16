@@ -13,7 +13,7 @@ import (
 func main() {
 
 	defer log.Flush()
-	log.Config(log.RollingFileConfig())
+	// log.Config(log.RollingFileConfig())
 
 	log.Trace("init...")
 	cancel := doLog()
