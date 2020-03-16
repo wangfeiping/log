@@ -1,8 +1,6 @@
 package log
 
 import (
-	"bytes"
-	"errors"
 	"fmt"
 
 	"github.com/wangfeiping/log/encoder"
@@ -120,50 +118,32 @@ func Flush() {
 
 // Trace logs
 func Trace(v ...interface{}) {
+	logger.Debug(fmt.Sprint(v...))
 }
 
 // Debug logs
 func Debug(v ...interface{}) {
-	msg, fields, err := parse(v...)
-	if err != nil {
-		fmt.Printf("log error(debug): %v\n", err)
-		return
-	}
-	logger.Debug(msg, fields...)
+	logger.Debug(fmt.Sprint(v...))
 }
 
 // Info logs
 func Info(v ...interface{}) {
-	msg, fields, err := parse(v...)
-	if err != nil {
-		fmt.Printf("log error(info): %v\n", err)
-		return
-	}
-	logger.Info(msg, fields...)
+	logger.Info(fmt.Sprint(v...))
 }
 
 // Warn logs
 func Warn(v ...interface{}) {
-	msg, fields, err := parse(v...)
-	if err != nil {
-		fmt.Printf("log error(warn): %v\n", err)
-		return
-	}
-	logger.Warn(msg, fields...)
+	logger.Warn(fmt.Sprint(v...))
 }
 
 // Error logs
 func Error(v ...interface{}) {
-	msg, fields, err := parse(v...)
-	if err != nil {
-		fmt.Printf("log error(error): %v\n", err)
-		return
-	}
-	logger.Error(msg, fields...)
+	logger.Error(fmt.Sprint(v...))
 }
 
 // Tracef logs
 func Tracef(format string, params ...interface{}) {
+	logger.Debug(fmt.Sprintf(format, params...))
 }
 
 // Debugf formats logs
@@ -186,42 +166,22 @@ func Errorf(format string, params ...interface{}) {
 	logger.Error(fmt.Sprintf(format, params...))
 }
 
-// DebugZ formats logs
-func DebugZ(msg string, fields ...zap.Field) {
+// Debugz formats logs
+func Debugz(msg string, fields ...zap.Field) {
 	logger.Debug(msg, fields...)
 }
 
-// InfoZ formats logs
-func InfoZ(msg string, fields ...zap.Field) {
+// Infoz formats logs
+func Infoz(msg string, fields ...zap.Field) {
 	logger.Info(msg, fields...)
 }
 
-// WarnZ formats logs
-func WarnZ(msg string, fields ...zap.Field) {
+// Warnz formats logs
+func Warnz(msg string, fields ...zap.Field) {
 	logger.Warn(msg, fields...)
 }
 
-// ErrorZ formats logs
-func ErrorZ(msg string, fields ...zap.Field) {
+// Errorz formats logs
+func Errorz(msg string, fields ...zap.Field) {
 	logger.Error(msg, fields...)
-}
-
-func parse(v ...interface{}) (string, []zap.Field, error) {
-	if msg, ok := v[0].(string); ok {
-		var fields []zap.Field
-		if len(v)%2 == 1 {
-			return msg, fields, nil
-		}
-	}
-	return "", nil, errors.New(join("unable to build log:", v[1:]...))
-}
-
-func join(msg string, v ...interface{}) string {
-	var buf bytes.Buffer
-	buf.WriteString(msg)
-	for _, s := range v {
-		buf.WriteString(" ")
-		buf.WriteString(fmt.Sprint(s))
-	}
-	return buf.String()
 }
