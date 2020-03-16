@@ -56,7 +56,8 @@ func Config(config string) {
 		level := zap.NewAtomicLevelAt(zap.DebugLevel)
 
 		core := zapcore.NewCore(
-			zapcore.NewJSONEncoder(encoderConfig),
+			// zapcore.NewJSONEncoder(encoderConfig),
+			zapcore.NewConsoleEncoder(encoderConfig),
 			zapcore.NewMultiWriteSyncer(
 				// zapcore.AddSync(os.Stdout),
 				zapcore.AddSync(&rolling)),
