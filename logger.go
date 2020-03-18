@@ -17,8 +17,8 @@ var logger *zap.Logger
 func init() {
 	// config := zap.NewProductionConfig()
 	config := newConfig()
-        
-        callerSkip := zap.AddCallerSkip(1)
+
+	callerSkip := zap.AddCallerSkip(1)
 	var err error
 	logger, err = config.Build(callerSkip)
 	if err != nil {
@@ -45,7 +45,7 @@ func Config(config string) {
 			MessageKey: "msg",
 			// StacktraceKey:  "stacktrace",
 			LineEnding:     zapcore.DefaultLineEnding,
-			EncodeLevel:    zapcore.CapitalColorLevelEncoder,
+			EncodeLevel:    zapcore.CapitalLevelEncoder,
 			EncodeTime:     zapcore.ISO8601TimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			// EncodeName:     zapcore.FullNameEncoder,
