@@ -3,7 +3,6 @@ package log
 import (
 	"fmt"
 
-	"github.com/wangfeiping/log/encoder"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
@@ -18,9 +17,10 @@ var logger *zap.Logger
 func init() {
 	// config := zap.NewProductionConfig()
 	config := newConfig()
-
+        
+        callerSkip := zap.AddCallerSkip(1)
 	var err error
-	logger, err = config.Build()
+	logger, err = config.Build(callerSkip)
 	if err != nil {
 		panic(fmt.Sprintf("log init failed: %v", err))
 	}
@@ -49,7 +49,7 @@ func Config(config string) {
 			EncodeTime:     zapcore.ISO8601TimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
 			// EncodeName:     zapcore.FullNameEncoder,
-			EncodeCaller: encoder.ProxyCallerEncoder,
+			EncodeCaller: zapcore.ShortCallerEncoder,
 		}
 
 		level := zap.NewAtomicLevelAt(zap.DebugLevel)
@@ -79,10 +79,10 @@ func newConfig() zap.Config {
 		CallerKey:  "caller",
 		// StacktraceKey:  "stacktrace",
 		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.LowercaseLevelEncoder,
+		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
 		EncodeTime:     zapcore.ISO8601TimeEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
-		EncodeCaller:   encoder.ProxyCallerEncoder,
+		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
 
 	// log level
