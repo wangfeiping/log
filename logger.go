@@ -48,8 +48,8 @@ func Config(config string) {
 			EncodeLevel:    zapcore.CapitalColorLevelEncoder,
 			EncodeTime:     zapcore.ISO8601TimeEncoder,
 			EncodeDuration: zapcore.SecondsDurationEncoder,
-			EncodeCaller:   zapcore.ShortCallerEncoder,
-			EncodeName:     zapcore.FullNameEncoder,
+			// EncodeName:     zapcore.FullNameEncoder,
+			EncodeCaller: encoder.ProxyCallerEncoder,
 		}
 
 		level := zap.NewAtomicLevelAt(zap.DebugLevel)
