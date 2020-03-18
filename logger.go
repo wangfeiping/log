@@ -17,8 +17,8 @@ var logger *zap.Logger
 func init() {
 	// config := zap.NewProductionConfig()
 	config := newConfig()
-        
-        callerSkip := zap.AddCallerSkip(1)
+
+	callerSkip := zap.AddCallerSkip(1)
 	var err error
 	logger, err = config.Build(callerSkip)
 	if err != nil {
@@ -64,9 +64,11 @@ func Config(config string) {
 		)
 
 		caller := zap.AddCaller()
+		callerSkip := zap.AddCallerSkip(1)
 		development := zap.Development()
 		filed := zap.Fields(zap.String("service", "logger"))
-		logger = zap.New(core, caller, development, filed)
+		logger = zap.New(core,
+			caller, callerSkip, development, filed)
 	}
 }
 
