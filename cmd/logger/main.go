@@ -13,7 +13,7 @@ import (
 func main() {
 
 	defer log.Flush()
-        // log.Config(log.RollingFileConfig())
+	log.Config(log.RollingFileConfig())
 
 	log.Trace("init...")
 	cancel := doLog()
@@ -35,7 +35,7 @@ func output() {
 }
 
 func doLog() (cancel context.CancelFunc) {
-	t := time.NewTicker(time.Duration(1) * time.Second)
+	t := time.NewTicker(time.Duration(100) * time.Millisecond)
 	running := true
 	var wg sync.WaitGroup
 	cancel = func() {
@@ -54,7 +54,7 @@ func doLog() (cancel context.CancelFunc) {
 				}
 			default:
 				{
-					time.Sleep(100 * time.Millisecond)
+					time.Sleep(10 * time.Millisecond)
 				}
 			}
 		}

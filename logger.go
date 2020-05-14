@@ -31,7 +31,7 @@ func Config(config string) {
 	if config == rollingFileConfig {
 		rolling := lumberjack.Logger{
 			Filename:   "./logger.log",
-			MaxSize:    512,
+			MaxSize:    128,
 			MaxBackups: 10,
 			MaxAge:     7,
 			Compress:   true,
