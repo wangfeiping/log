@@ -38,7 +38,7 @@ func main() {
 }
 
 func initConfig(_ *cobra.Command, _ []string) error {
-	log.Config(log.RollingFileConfig())
+	log.Config(nil)
 	log.Infof("starting at %s", getExecPath())
 	return nil
 }
