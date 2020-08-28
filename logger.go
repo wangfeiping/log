@@ -74,9 +74,11 @@ func Config(config string) {
 		caller := zap.AddCaller()
 		callerSkip := zap.AddCallerSkip(1)
 		development := zap.Development()
-		filed := zap.Fields(zap.String("service", "logger"))
+		// filed := zap.Fields(zap.String("service", "logger"))
+		// logger = zap.New(core,
+		// 	caller, callerSkip, development, filed)
 		logger = zap.New(core,
-			caller, callerSkip, development, filed)
+			caller, callerSkip, development)
 	}
 }
 
@@ -103,7 +105,7 @@ func newConfig() zap.Config {
 		Development:   true,
 		Encoding:      "console", // "console/json",
 		EncoderConfig: encoderConfig,
-		InitialFields: map[string]interface{}{"service": "logger"},
+		// InitialFields: map[string]interface{}{"service": "logger"},
 		// OutputPaths:      []string{"stdout", "./logger.log"},
 		OutputPaths:      []string{"stdout"},
 		ErrorOutputPaths: []string{"stderr"},
