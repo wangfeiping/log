@@ -1,4 +1,4 @@
-package log
+package logger
 
 import (
 	"fmt"
@@ -21,56 +21,60 @@ type Logger interface {
 
 func NewLogger(conf *Conf) Logger {
 	return &Log{
-		logger: zap.New(conf.Core, conf.Options...)}
+		log: zap.New(conf.Core, conf.Options...)}
+}
+
+func NewLog(log *zap.Logger) Logger {
+	return &Log{log: log}
 }
 
 type Log struct {
-	logger *zap.Logger
+	log *zap.Logger
 }
 
 func (l *Log) Flush() error {
-	return l.logger.Sync()
+	return l.log.Sync()
 }
 
 func (l *Log) Trace(v ...interface{}) {
-	l.logger.Debug(fmt.Sprint(v...))
+	l.log.Debug(fmt.Sprint(v...))
 }
 
 func (l *Log) Debug(v ...interface{}) {
-	l.logger.Debug(fmt.Sprint(v...))
+	l.log.Debug(fmt.Sprint(v...))
 }
 
 // Info logs
 func (l *Log) Info(v ...interface{}) {
-	l.logger.Info(fmt.Sprint(v...))
+	l.log.Info(fmt.Sprint(v...))
 }
 
 // Warn logs
 func (l *Log) Warn(v ...interface{}) {
-	l.logger.Warn(fmt.Sprint(v...))
+	l.log.Warn(fmt.Sprint(v...))
 }
 
 // Error logs
 func (l *Log) Error(v ...interface{}) {
-	l.logger.Error(fmt.Sprint(v...))
+	l.log.Error(fmt.Sprint(v...))
 }
 
 // Debugz formats logs
 func (l *Log) Debugz(msg string, fields ...zap.Field) {
-	l.logger.Debug(msg, fields...)
+	l.log.Debug(msg, fields...)
 }
 
 // Infoz formats logs
 func (l *Log) Infoz(msg string, fields ...zap.Field) {
-	l.logger.Info(msg, fields...)
+	l.log.Info(msg, fields...)
 }
 
 // Warnz formats logs
 func (l *Log) Warnz(msg string, fields ...zap.Field) {
-	l.logger.Warn(msg, fields...)
+	l.log.Warn(msg, fields...)
 }
 
 // Errorz formats logs
 func (l *Log) Errorz(msg string, fields ...zap.Field) {
-	l.logger.Error(msg, fields...)
+	l.log.Error(msg, fields...)
 }

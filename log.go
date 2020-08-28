@@ -8,6 +8,8 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/wangfeiping/log/logger"
 )
 
 // no-lint
@@ -16,7 +18,7 @@ const (
 	FlagSize    = "log.size"
 )
 
-var logger Logger
+var log logger.Logger
 
 func init() {
 	// config := zap.NewProductionConfig()
@@ -27,18 +29,18 @@ func init() {
 	if err != nil {
 		panic(fmt.Sprintf("log init failed: %v", err))
 	}
-	logger = &Log{logger: l}
+	log = logger.NewLog(l)
 }
 
 // Config replace logger from config string
-func Config(c LogConfig) {
+func Config(c logger.LogConfig) {
 	if c == nil {
 		c = defaultConfig()
 	}
-	logger = c.NewLogger()
+	log = c.NewLogger()
 }
 
-func defaultConfig() LogConfig {
+func defaultConfig() logger.LogConfig {
 	rolling := lumberjack.Logger{
 		Filename:   viper.GetString(FlagLogFile),
 		MaxSize:    viper.GetInt(FlagSize),
@@ -79,7 +81,7 @@ func defaultConfig() LogConfig {
 	opts = append(opts, zap.Development())
 	// logger = zap.New(core,
 	// 	caller, callerSkip, development)
-	return &Conf{Core: core, Options: opts}
+	return &logger.Conf{Core: core, Options: opts}
 }
 
 func newConfig() zap.Config {
@@ -120,75 +122,75 @@ func Load(conf string) {
 
 // Flush immediately processes all currently queued logs.
 func Flush() {
-	logger.Flush()
+	log.Flush()
 }
 
 // Trace logs
 func Trace(v ...interface{}) {
-	logger.Trace(v)
+	log.Trace(v)
 }
 
 // Debug logs
 func Debug(v ...interface{}) {
-	logger.Debug(v)
+	log.Debug(v)
 }
 
 // Info logs
 func Info(v ...interface{}) {
-	logger.Info(v)
+	log.Info(v)
 }
 
 // Warn logs
 func Warn(v ...interface{}) {
-	logger.Warn(v)
+	log.Warn(v)
 }
 
 // Error logs
 func Error(v ...interface{}) {
-	logger.Error(v)
+	log.Error(v)
 }
 
 // Tracef logs
 func Tracef(format string, params ...interface{}) {
-	logger.Debug(fmt.Sprintf(format, params...))
+	log.Debug(fmt.Sprintf(format, params...))
 }
 
 // Debugf formats logs
 func Debugf(format string, params ...interface{}) {
-	logger.Debug(fmt.Sprintf(format, params...))
+	log.Debug(fmt.Sprintf(format, params...))
 }
 
 // Infof formats logs
 func Infof(format string, params ...interface{}) {
-	logger.Info(fmt.Sprintf(format, params...))
+	log.Info(fmt.Sprintf(format, params...))
 }
 
 // Warnf formats logs
 func Warnf(format string, params ...interface{}) {
-	logger.Warn(fmt.Sprintf(format, params...))
+	log.Warn(fmt.Sprintf(format, params...))
 }
 
 // Errorf formats logs
 func Errorf(format string, params ...interface{}) {
-	logger.Error(fmt.Sprintf(format, params...))
+	log.Error(fmt.Sprintf(format, params...))
 }
 
 // Debugz formats logs
 func Debugz(msg string, fields ...zap.Field) {
-	logger.Debugz(msg, fields...)
+	log.Debugz(msg, fields...)
 }
 
 // Infoz formats logs
 func Infoz(msg string, fields ...zap.Field) {
-	logger.Infoz(msg, fields...)
+	log.Infoz(msg, fields...)
 }
 
 // Warnz formats logs
 func Warnz(msg string, fields ...zap.Field) {
-	logger.Warnz(msg, fields...)
+	log.Warnz(msg, fields...)
 }
 
 // Errorz formats logs
 func Errorz(msg string, fields ...zap.Field) {
-	logger.Errorz(msg, fields...)
+	log.Errorz(msg, fields...)
 }
