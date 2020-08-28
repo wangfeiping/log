@@ -2,24 +2,66 @@ package main
 
 import (
 	"context"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sync"
 	"time"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/wangfeiping/log"
 )
 
 func main() {
-
 	defer log.Flush()
-	log.Config(log.RollingFileConfig())
 
+	cobra.EnableCommandSorting = false
+
+	rootCmd := &cobra.Command{
+		Use:               "logger",
+		Short:             "Just for logger testing",
+		PersistentPreRunE: initConfig,
+		RunE:              doLogs,
+	}
+	rootCmd.PersistentFlags().String(log.FlagLogFile, "./test.log", "log file path")
+	viper.BindPFlag(log.FlagLogFile, rootCmd.PersistentFlags().Lookup(log.FlagLogFile))
+	rootCmd.PersistentFlags().Int(log.FlagSize, 10, "log size(MB)")
+	viper.BindPFlag(log.FlagSize, rootCmd.PersistentFlags().Lookup(log.FlagSize))
+
+	if err := rootCmd.Execute(); err != nil {
+		log.Error(err)
+		os.Exit(-1)
+	}
+}
+
+func initConfig(_ *cobra.Command, _ []string) error {
+	log.Config(log.RollingFileConfig())
+	log.Infof("starting at %s", getExecPath())
+	return nil
+}
+
+func doLogs(_ *cobra.Command, _ []string) error {
 	log.Trace("init...")
 	cancel := doLog()
 	log.Info("ok, done.")
 
 	keepRunning(cancel)
+	return nil
+}
+
+// getExecPath returns the execution path
+func getExecPath() (execPath string) {
+	file, _ := exec.LookPath(os.Args[0])
+	execFile := filepath.Base(file)
+	execPath, _ = filepath.Abs(file)
+	if len(execPath) > 1 {
+		rs := []rune(execPath)
+		execPath = string(rs[0:(len(execPath) - len(execFile))])
+	}
+	return
 }
 
 func output() {

@@ -3,9 +3,17 @@ package log
 import (
 	"fmt"
 
+	"github.com/spf13/viper"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
+)
+
+// no-lint
+const (
+	FlagLogFile = "log.file"
+	FlagSize    = "log.size"
 )
 
 var defaultConfig = ``
@@ -30,7 +38,7 @@ func init() {
 func Config(config string) {
 	if config == rollingFileConfig {
 		rolling := lumberjack.Logger{
-			Filename:   "./logger.log",
+			Filename:   viper.GetString(FlagLogFile),
 			MaxSize:    128,
 			MaxBackups: 10,
 			MaxAge:     7,
