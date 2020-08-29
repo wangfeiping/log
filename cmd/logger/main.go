@@ -27,9 +27,8 @@ func main() {
 		RunE:              doLogs,
 	}
 	rootCmd.PersistentFlags().String(log.FlagLogFile, "./test.log", "log file path")
-	viper.BindPFlag(log.FlagLogFile, rootCmd.PersistentFlags().Lookup(log.FlagLogFile))
-	rootCmd.PersistentFlags().Int(log.FlagSize, 10, "log size(MB)")
-	viper.BindPFlag(log.FlagSize, rootCmd.PersistentFlags().Lookup(log.FlagSize))
+	rootCmd.PersistentFlags().Int(log.FlagLogSize, 10, "log size(MB)")
+	rootCmd.PersistentFlags().Int(log.FlagLogBackup, 10, "log backup")
 
 	if err := rootCmd.Execute(); err != nil {
 		log.Error(err)
@@ -37,7 +36,8 @@ func main() {
 	}
 }
 
-func initConfig(_ *cobra.Command, _ []string) error {
+func initConfig(cmd *cobra.Command, _ []string) error {
+	viper.BindPFlags(cmd.Flags())
 	log.Config(nil)
 	log.Infof("starting at %s", getExecPath())
 	return nil

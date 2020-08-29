@@ -14,8 +14,9 @@ import (
 
 // no-lint
 const (
-	FlagLogFile = "log.file"
-	FlagSize    = "log.size"
+	FlagLogFile   = "log.file"
+	FlagLogSize   = "log.size"
+	FlagLogBackup = "log.backup"
 )
 
 var log logger.Logger
@@ -43,8 +44,8 @@ func Config(c logger.LogConfig) {
 func defaultConfig() logger.LogConfig {
 	rolling := lumberjack.Logger{
 		Filename:   viper.GetString(FlagLogFile),
-		MaxSize:    viper.GetInt(FlagSize),
-		MaxBackups: 10,
+		MaxSize:    viper.GetInt(FlagLogSize),
+		MaxBackups: viper.GetInt(FlagLogBackup),
 		MaxAge:     7,
 		Compress:   true,
 	}
