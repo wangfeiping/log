@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"sync/atomic"
 
 	"github.com/spf13/viper"
 
@@ -20,6 +21,7 @@ const (
 )
 
 var log logger.Logger
+var errorCount uint64 = 0
 
 func init() {
 	// config := zap.NewProductionConfig()
@@ -148,6 +150,7 @@ func Warn(v ...interface{}) {
 
 // Error logs
 func Error(v ...interface{}) {
+	atomic.AddUint64(&errorCount, 1)
 	log.Error(v)
 }
 
@@ -173,6 +176,7 @@ func Warnf(format string, params ...interface{}) {
 
 // Errorf formats logs
 func Errorf(format string, params ...interface{}) {
+	atomic.AddUint64(&errorCount, 1)
 	log.Error(fmt.Sprintf(format, params...))
 }
 
@@ -193,5 +197,18 @@ func Warnz(msg string, fields ...zap.Field) {
 
 // Errorz formats logs
 func Errorz(msg string, fields ...zap.Field) {
+	atomic.AddUint64(&errorCount, 1)
 	log.Errorz(msg, fields...)
+}
+
+// Output error logs and panic
+func Panicf(format string, params ...interface{}) {
+	err := fmt.Sprintf(format, params...)
+	Error(err)
+	Flush()
+	panic(err)
+}
+
+func ErrorCount() {
+	atomic.LoadUint64(&errorCount)
 }
