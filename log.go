@@ -209,6 +209,6 @@ func Panicf(format string, params ...interface{}) {
 	panic(err)
 }
 
-func ErrorCount() {
-	atomic.LoadUint64(&errorCount)
+func ErrorCount() uint64 {
+	return atomic.LoadUint64(&errorCount)
 }
